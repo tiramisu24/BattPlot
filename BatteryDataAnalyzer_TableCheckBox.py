@@ -264,6 +264,8 @@ class tabdemo(QTabWidget):
     def setHeadings(self):
         self.headings = self.capacityGraph.get_headings(self.list_names,self.sheetName)
         headingTitle= self.headings.keys()
+        self.tab1.children()[6].clear()
+
         for headingName in headingTitle:
             self.tab1.children()[6].addItem(str(headingName))
             self.show()
@@ -271,6 +273,7 @@ class tabdemo(QTabWidget):
 
     def setSheetName(self):
         self.sheetnames = self.capacityGraph.get_sheetnames(self.list_names)
+        self.tab1.children()[4].clear()
         for sheet in self.sheetnames:
             self.tab1.children()[4].addItem(sheet)
             self.show()
