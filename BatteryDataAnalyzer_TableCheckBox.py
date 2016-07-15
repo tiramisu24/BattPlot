@@ -68,8 +68,7 @@ class tabdemo(QTabWidget):
             self.show()
         self.populateChecklist()
 
-    def populateChecklist(self):
-        
+    def populateChecklist(self):      
         row = 0
         for eachName in self.dict_path_names:
             newCheckBox = QtGui.QTableWidgetItem(eachName)

@@ -12,8 +12,6 @@ import pdb
 
 class PlotCapacity(PlotGraph):
     AreaElectrode = 1
-    
-
 
     def plot_data(self, file_names, sheet_num, column_cell, set_num,
                   graphTitle, AreaElectrode, 
