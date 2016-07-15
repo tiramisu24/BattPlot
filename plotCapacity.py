@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from openpyxl import Workbook
 import plotGraph
 from plotGraph import PlotGraph
+import pdb
+
 
 class PlotCapacity(PlotGraph):
     AreaElectrode = 1
@@ -28,20 +30,27 @@ class PlotCapacity(PlotGraph):
             end_cell = column_name + str(max_length)
             start_cell = column_name + str(1)
             temp_cell = cur_sheet[start_cell:end_cell]
-            capacity = self.extract_data(temp_cell, self.AreaElectrode)       
-             
-            cycle_number = range(1,max_length)
-             
-            if count >=set_num or count == 0:
+            capacity = self.extract_data(temp_cell, self.AreaElectrode)  
+            max_length = len(capacity)     
+            pdb.set_trace()
+ 
+            cycle_number = range(1,max_length+1)
+            if count >set_num or count == 0:
+                if count != 0:
+                    plt.legend()            
+
                 self.setParam(graphTitle, AreaElectrode, float(YAxisLimit), float(YAxisLower), 
                                     float(XAxisLimit), float(XAxisLower),YaxisLabel,XaxisLabel)                
-                count = 1
+                count = 1                
+
                             
-            plt.plot(cycle_number,capacity)
- 
+            line, = plt.plot(cycle_number,capacity)
+            line.set_label(file_name)
             count +=1
-                    
-        
+            
+#         pdb.set_trace()
+
+        plt.legend()            
         plt.show()
         
  

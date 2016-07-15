@@ -1,5 +1,4 @@
 import sys
-
 from PyQt4 import QtGui,QtCore
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -220,7 +219,7 @@ class tabdemo(QTabWidget):
         if self.tab1.optionBox.isEmpty() == False:
             try:
                 self.tab1.optionBox.removeWidget(self.tab1.setComboBox)
-            except:
+            except AttributeError:
                 pass
 
             
@@ -252,11 +251,11 @@ class tabdemo(QTabWidget):
             YAxisLower = float(YAxisLower)
         except ValueError:
             YAxisLower = 0
-        pdb.set_trace()
+#         pdb.set_trace()
 
-        self.setGroupNum(self.tab1.setCustom.text())  
+#         self.setGroupNum(self.tab1.setCustom.text())  
 
-        self.capacityGraph.plot_data(self.list_names, 'sheetname1', self.column_cell, self.setNum, 
+        self.capacityGraph.plot_data(self.list_names, self.sheetName, self.column_cell, self.setNum, 
                                                  graphTitle, AreaElectrode, 
                                                 XAxisLimit, XAxisLower,  YAxisLimit, YAxisLower, 
                                                 'Capacity (mAh/cm2)','Cycle Number')
@@ -266,7 +265,7 @@ class tabdemo(QTabWidget):
         self.headings = self.capacityGraph.get_headings(self.list_names,self.sheetName)
         headingTitle= self.headings.keys()
         for headingName in headingTitle:
-            self.tab1.children()[6].addItem(headingName)
+            self.tab1.children()[6].addItem(str(headingName))
             self.show()
         self.tab1.children()[6].setCurrentIndex(0)
 
