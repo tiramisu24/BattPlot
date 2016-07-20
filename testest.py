@@ -1,21 +1,28 @@
+import pdb
 import os
+from openpyxl import load_workbook
 import plotVoltage
 from plotVoltage import PlotVoltage
-import pdb
+import plotCapacity
+from plotCapacity import PlotCapacity
 
 #Test Plot Voltage
-pdb.set_trace()
+# wb = load_workbook('Test.xlsx')
+
+# testPlot = PlotCapacity()
 
 testPlot = PlotVoltage()
-pdb.set_trace()
 #    def breakCycles(self, filenames, sheetName, voltage, capacity, current, areaElectrode):
-var = testPlot.breakCycles(['Text.xlsx'], 'Record', 'E1', 'I1', 'F1', 1.5)
+var = testPlot.breakCycles(['Test.xlsx'], 'Record', 'A','E', 'I', 'F', 1.5)
+pdb.set_trace()
 
-#  plot_data(self, file_names, cycle_num, sheet_num, column_cell, 
+
+print 'hello'
+#     def plot_data(self, file_names, sheet_num, column_cell, set_num,
 #                   graphTitle, AreaElectrode, 
 #                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
-#                   YaxisLabel,XaxisLabel):
+#                   YaxisLabel,XaxisLabel
 
-# testPlot.plot_data(['Test.xlsx'], 'sheetname1', 'B1', 1.5, 4)
+# testPlot.plot_data(['Test.xlsx'], 'sheetname1', 'B1', 1, 'Title', 1.5, 4,1,5,1,'dslfkj','sdlfkj')
 
 

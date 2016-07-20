@@ -16,7 +16,7 @@ class PlotCapacity(PlotGraph):
     def plot_data(self, file_names, sheet_num, column_cell, set_num,
                   graphTitle, AreaElectrode, 
                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
-                  YaxisLabel,XaxisLabel):
+                  YaxisLabel, XaxisLabel):
         
         count =0
         column_name = column_cell[0]
@@ -30,7 +30,6 @@ class PlotCapacity(PlotGraph):
             temp_cell = cur_sheet[start_cell:end_cell]
             capacity = self.extract_data(temp_cell, self.AreaElectrode)  
             max_length = len(capacity)     
-            pdb.set_trace()
  
             cycle_number = range(1,max_length+1)
             if count >set_num or count == 0:
