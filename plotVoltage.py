@@ -26,7 +26,7 @@ class PlotVoltage(PlotGraph):
         max_length = curSheet.max_row                  
         prevCycle = 1
         
-        for row in range(3, max_length):
+        for row in range(3, max_length+1):
             try:
 #                 pdb.set_trace()
                 curCycle = int(curSheet[cycle + str(row)].value)
@@ -77,13 +77,18 @@ class PlotVoltage(PlotGraph):
             else:
                 continue
             
-            cycle1C = dictCycles[1]
-            plt.plot(cycle1C['chargeCap'],cycle1C['chargeVol'])
-            plt.plot(cycle1C['chargeCap'],cycle1C['chargeVol'])
+            for num in cycle_num:                
+#                 pdb.set_trace()
+
+                tempDataList = dictCycles[num]
+                line1, =plt.plot(tempDataList['chargeCap'],tempDataList['chargeVol'])
+                line2, =plt.plot(tempDataList['dischargeCap'],tempDataList['dischargeVol'])
             
-                    
+                line1.set_label(num)
+                line2.set_label(num)
         
         #axis range
+        plt.legend()
         plt.show()
         
     

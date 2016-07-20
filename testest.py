@@ -15,7 +15,7 @@ testPlot = PlotVoltage()
 #    def breakCycles(self, filenames, sheetName, voltage, capacity, current, areaElectrode):
 # var = testPlot.breakCycles(['Test.xlsx'], 'Record', 'A','E', 'I', 'F', 1.5)
 # pdb.set_trace()
-testPlot.plot_data(['Test.xlsx'], 1, 'Record', 'E', 'I', "graphTitle", 1, 'F', 'A', 20, 1, 20, 1, "YaxisLabel", "XaxisLabel")
+testPlot.plot_data(['Test.xlsx'], [1,2], 'Record', 'E', 'I', "graphTitle", 1, 'F', 'A', 20, 1, 20, 1, "YaxisLabel", "XaxisLabel")
 
 # 
 # 
