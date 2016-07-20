@@ -5,69 +5,82 @@ from plotGraph import PlotGraph
 from os import listdir
 from openpyxl import load_workbook
 import matplotlib.pyplot as plt
+import pdb
 
-class PlotVoltage(plotGraph):
+class PlotVoltage(PlotGraph):
         
-    def breakCycles(self, filenames, sheetName, voltage, capacity, current, areaElectrode):
+    def breakCycles(self, filename, sheetName, cycle,voltage, capacity, current, areaElectrode):
         #voltage and capacity returns column names
         #returns inidividual cycles of filenames selected
         dictCycles ={}
 
-        num = 1
-        for eachFile in filenames:
-            temp = {}
-            chargeCap = []
-            chargeVol = []
-            discharCap = []
-            discharVol = []
-            comp = eachFile[-4:] 
-            if (comp =='xlsx'):
-                wb = load_workbook(eachFile, data_only= True)
-            else:
-                continue
-            
-            curSheet = wb[sheetName]
-                        
-            
-            for row in range(2, curSheet):
-                curRowCur = curSheet[current + str(row)]
-                curRowCap = float(curSheet[capacity + str(row)])/float(areaElectrode)
-                curRowVol = curSheet[voltage + str(row)]
-                nextRowVol = curSheet[voltage + str(row)]
+        temp = {}
+        chargeCap = []
+        chargeVol = []
+        discharCap = []
+        discharVol = []
+        
+        wb = load_workbook(filename)
+        
+        curSheet = wb[sheetName]            
+        max_length = curSheet.max_row                  
+        prevCycle = 1
+        
+        for row in range(3, max_length):
+            try:
+#                 pdb.set_trace()
+                curCycle = int(curSheet[cycle + str(row)].value)
+                curRowCur = curSheet[current + str(row)].value
+                curRowCap = float(curSheet[capacity + str(row)].value)/float(areaElectrode)
+                curRowVol = curSheet[voltage + str(row)].value
+                prevRowVol = curSheet[voltage + str(row-1)].value
+                #if change or if maxlength then append information?
+                if row == max_length or curCycle>prevCycle: # or bigger than the next
+                    temp['chargeCap']=chargeCap
+                    temp['chargeVol']=chargeVol
+                    temp['dischargeCap']=discharCap
+                    temp['dischargeVol']=discharVol
+                 
+                    dictCycles[prevCycle]=temp                
+                    prevCycle = curCycle       
                 
-                if nextRowVol>=curRowVol or curRowCur >0:
+                if curRowCur ==0:
+                    continue
+    
+                if prevRowVol<=curRowVol or curRowCur >0:
                     chargeCap.append(curRowCap)
                     chargeVol.append(curRowVol)
                     
-                elif nextRowVol<=curRowVol or curRowCur <0:
+                elif prevRowVol>=curRowVol or curRowCur <0:
                     discharCap.append(curRowCap)
                     discharVol.append(curRowVol)
-            
-            temp['chargeCap']=chargeCap
-            temp['chargeVol']=chargeVol
-            temp['dischargeCap']=discharCap
-            temp['dischargeVol']=discharVol
-            
-            dictCycles[str(num)]=temp
-            num +=1
-        #returns a dictionary of dictionaries    
+            except:
+                break
         return dictCycles
 
     def plot_data(self, file_names, cycle_num, sheet_num, VoltageCol, CapacityCol,
                   graphTitle, AreaElectrode, 
+                  currentCol, cycleCol,
                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
                   YaxisLabel,XaxisLabel):
         
         self.setParam(graphTitle, AreaElectrode, float(YAxisLimit), float(YAxisLower), 
                                             float(XAxisLimit), float(XAxisLower),YaxisLabel,XaxisLabel)     
         
-        
-        #call break cycle         
-        count =0
-        column_name = VoltageCol[0]
+#         pdb.set_trace()
+
         # add formating code
         for file_name in file_names:
-            count +=1
+            comp = file_name[-4:] 
+            if (comp =='xlsx'):
+                dictCycles = self.breakCycles(file_name, sheet_num, cycleCol, VoltageCol, CapacityCol, currentCol, AreaElectrode)
+            else:
+                continue
+            
+            cycle1C = dictCycles[1]
+            plt.plot(cycle1C['chargeCap'],cycle1C['chargeVol'])
+            plt.plot(cycle1C['chargeCap'],cycle1C['chargeVol'])
+            
                     
         
         #axis range

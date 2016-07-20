@@ -13,16 +13,15 @@ from plotCapacity import PlotCapacity
 
 testPlot = PlotVoltage()
 #    def breakCycles(self, filenames, sheetName, voltage, capacity, current, areaElectrode):
-var = testPlot.breakCycles(['Test.xlsx'], 'Record', 'A','E', 'I', 'F', 1.5)
-pdb.set_trace()
+# var = testPlot.breakCycles(['Test.xlsx'], 'Record', 'A','E', 'I', 'F', 1.5)
+# pdb.set_trace()
+testPlot.plot_data(['Test.xlsx'], 1, 'Record', 'E', 'I', "graphTitle", 1, 'F', 'A', 20, 1, 20, 1, "YaxisLabel", "XaxisLabel")
 
-
-print 'hello'
-#     def plot_data(self, file_names, sheet_num, column_cell, set_num,
+# 
+# 
+#     def plot_data(self, file_names, cycle_num, sheet_num, VoltageCol, CapacityCol,
 #                   graphTitle, AreaElectrode, 
-#                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
-#                   YaxisLabel,XaxisLabel
-
-# testPlot.plot_data(['Test.xlsx'], 'sheetname1', 'B1', 1, 'Title', 1.5, 4,1,5,1,'dslfkj','sdlfkj')
-
+#                   currentCol, cycleCol,
+#                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, k
+#                   YaxisLabel,XaxisLabel):
 
