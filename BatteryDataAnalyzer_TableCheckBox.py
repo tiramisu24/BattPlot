@@ -56,7 +56,10 @@ class tabdemo(QTabWidget):
         layout.addRow("Import",bt) 
         fList = QComboBox()     
         layout.addRow("List",fList)
-        bt.clicked.connect(self.loadFile)     
+        bt.clicked.connect(self.loadFile) 
+        bt.clicked.connect(lambda: self.populateChecklist(self.tab1.filenameBox,self.dict_path_names))
+#                 self.populateChecklist(self.tab1.filenameBox,self.dict_path_names)
+    
         self.setTabText(0,"Import")
         self.tab0.setLayout(layout)
         
@@ -64,7 +67,7 @@ class tabdemo(QTabWidget):
 
     def loadFile(self):    
         fname = QFileDialog.getOpenFileNames(self, 'Open file', '\home')
-        
+         
         for item in fname:
             f = open(item, 'r')
             ss = f.name
@@ -73,21 +76,36 @@ class tabdemo(QTabWidget):
             self.dict_path_names[ss_split[-1]]= ss
             self.tab0.children()[4].addItem(ss)
             self.show()
-        self.populateChecklist()
+#         pdb.set_trace()
+#     def populateChecklist(self):      
+#         row = 0
+#         for eachName in self.dict_path_names:
+#             newCheckBox = QtGui.QTableWidgetItem(eachName)
+#             newCheckBox.setFlags(QtCore.Qt.ItemIsUserCheckable |QtCore.Qt.ItemIsEnabled)
+#             newCheckBox.setCheckState(QtCore.Qt.Unchecked)
+#             
+#             self.tab1.filenameBox.insertRow(row)
+#             self.tab1.filenameBox.setItem(row, 1 , newCheckBox)
+# 
+#         row +=1        
+#           
+#         self.tab1.filenameBox.itemClicked.connect(self.clicked)
 
-    def populateChecklist(self):      
+
+    def populateChecklist(self,Box, thisList):      
         row = 0
-        for eachName in self.dict_path_names:
+#         pdb.set_trace()
+        for eachName in thisList:
             newCheckBox = QtGui.QTableWidgetItem(eachName)
             newCheckBox.setFlags(QtCore.Qt.ItemIsUserCheckable |QtCore.Qt.ItemIsEnabled)
             newCheckBox.setCheckState(QtCore.Qt.Unchecked)
             
-            self.tab1.filenameBox.insertRow(row)
-            self.tab1.filenameBox.setItem(row, 1 , newCheckBox)
+            Box.insertRow(row)
+            Box.setItem(row, 1 , newCheckBox)
 
         row +=1        
           
-        self.tab1.filenameBox.itemClicked.connect(self.clicked)
+        Box.itemClicked.connect(self.clicked)
 
     def clicked(self, item):
         if item.checkState() == QtCore.Qt.Checked:
@@ -236,8 +254,8 @@ class tabdemo(QTabWidget):
 
     def setGroupNum(self, num):
         self.setNum = int(num)
-
-    def plotCapGraph(self, graphTitle, AreaElectrode, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
+    
+    def setAxis(self,YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
         try:
             XAxisLimit= float(XAxisLimit)           
         except ValueError:            
@@ -254,14 +272,28 @@ class tabdemo(QTabWidget):
             YAxisLower = float(YAxisLower)
         except ValueError:
             YAxisLower = 0
+        
+        return [YAxisLimit, YAxisLower, XAxisLimit, XAxisLower]
+
+    def plotCapGraph(self, graphTitle, AreaElectrode, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
+        axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)
 #         pdb.set_trace()
 
 #         self.setGroupNum(self.tab1.setCustom.text())  
 
         self.capacityGraph.plot_data(self.list_names, self.sheetName, self.capacity_cell, self.setNum, 
                                                  graphTitle, AreaElectrode, 
-                                                XAxisLimit, XAxisLower,  YAxisLimit, YAxisLower, 
+                                                 axisRange[0], axisRange[1], axisRange[2], axisRange[3],
                                                 'Capacity (mAh/cm2)','Cycle Number')
+    
+    #make this more general!!
+    def populateComboBox(self, box, thisList):
+        box.clear()
+        for item in thisList:
+            box.addItem(str(item))
+            self.show()
+            
+        box.setCurrentIndex(0)
     
     def setHeadings(self):
         self.headings = self.capacityGraph.get_headings(self.list_names,self.sheetName)
@@ -305,8 +337,6 @@ class tabdemo(QTabWidget):
         
         self.tab2.cycleNumberBox = QTableWidget(1,1)
         
-
-        
         formLayout = QFormLayout()
         hbox = QtGui.QHBoxLayout()
         hbox.addStretch(1)
@@ -318,8 +348,9 @@ class tabdemo(QTabWidget):
         bt1.toggle()
         bt1.setText("Plot")
         bt1.resize(5,10)
-        okButton = QPushButton
-        okButton.setText('OK')
+        okButton = QPushButton()
+        okButton.toggle()
+        okButton.setText("Okay")
         okButton.resize(5,10)
         
         graphTitle = QLineEdit()        
@@ -327,9 +358,11 @@ class tabdemo(QTabWidget):
         YAxisLower = QLineEdit()
         XAxisLimit = QLineEdit()
         XAxisLower = QLineEdit()
-        Cycle = QLineEdit()
-        Voltage = QLineEdit()
-        Current = QLineEdit()
+        #change the next 3 to combobox
+        
+        Cycle = QComboBox()
+        Voltage = QComboBox()
+        Current = QComboBox()
 
        
         formLayout.addRow("Name",graphTitle)
@@ -342,10 +375,10 @@ class tabdemo(QTabWidget):
         formLayout.addRow("Voltage", Voltage)
         formLayout.addRow("Current", Current)
         
-        selectionLayout.addWidget(self.tab2.filenameBox)
         selectionLayout.addWidget(self.tab2.cycleNumberBox)
 
-        okButton.click.connect(lambda: self.setCycleName(Cycle.text(), Voltage.text(), Current.text()))
+        okButton.clicked.connect(lambda: self.setCycleName(Cycle.text(), Voltage.text(), Current.text()))
+
         
         bt1.clicked.connect(lambda: self.graphVoltage(graphTitle.text(), YAxisLimit.text(),
                                              YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
@@ -369,22 +402,8 @@ class tabdemo(QTabWidget):
         self.tab2.setLayout(layout)
 
     def graphVoltage(self, graphTitle, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
-        try:
-            XAxisLimit= float(XAxisLimit)           
-        except ValueError:            
-            XAxisLimit = 50           
-        try:
-            XAxisLower = float(XAxisLower) 
-        except ValueError:
-            XAxisLower =0
-        try: 
-            YAxisLimit = float(YAxisLimit)
-        except ValueError:
-            YAxisLimit = 6
-        try:
-            YAxisLower = float(YAxisLower)
-        except ValueError:
-            YAxisLower = 0
+        axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)
+
         
 
 #         self.voltageGraph.plot_data(self.list_names, cycle_num, self.sheetName, VoltageCol, CapacityCol, graphTitle, AreaElectrode, currentCol, cycleCol, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, YaxisLabel, XaxisLabel)
