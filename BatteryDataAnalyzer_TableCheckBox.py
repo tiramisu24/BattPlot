@@ -4,7 +4,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from plotCapacity import *
 import pdb
-from cellData.plotVoltage import PlotVoltage
+from plotVoltage import PlotVoltage
 
 class tabdemo(QTabWidget):
     capacityGraph = PlotCapacity()
@@ -18,6 +18,11 @@ class tabdemo(QTabWidget):
     capacity_cell=''
     sheetName = 'Sheet'
     setNum = 4
+#     cycleDict = {}
+    areaElectrode=1
+#     cycleCol=''
+#     voltageCol=''
+#     currentCol=''
 
 
     
@@ -130,7 +135,7 @@ class tabdemo(QTabWidget):
         bt1.resize(5,10)
         bt2 = QPushButton()
         bt2.toggle()
-        bt2.setText("Ok")
+        bt2.setText("Okay")
         bt2.resize(5,10)
         self.tab1.rbt = QRadioButton('Set')
         self.tab1.rbt2 = QRadioButton('Custom')
@@ -180,10 +185,12 @@ class tabdemo(QTabWidget):
 
         layout.addWidget(bt2)
         
+        self.areaElectrode=AreaElectrode.text()
         bt1.clicked.connect(lambda: self.plotCapGraph(graphTitle.text(), AreaElectrode.text(), YAxisLimit.text(),
                                                      YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
 
         bt2.clicked.connect(self.setSheetName)
+        bt2.clicked.connect(self.setCycleName)
             
         self.tab1.rbt.clicked.connect(self.autoSet)
         self.tab1.rbt2.clicked.connect(self.customSet)
@@ -212,8 +219,7 @@ class tabdemo(QTabWidget):
 
             self.tab1.optionBox.addWidget(self.tab1.setComboBox) 
             self.tab1.setComboBox.activated[str].connect(self.setGroupNum)
-            
-    
+                
     def customSet(self):
 #         pdb.set_trace()
             
@@ -228,12 +234,8 @@ class tabdemo(QTabWidget):
             self.tab1.setCustom = QLineEdit()
             self.tab1.optionBox.addWidget(self.tab1.setCustom)
 
-#             self.setGroupNum(self.tab1.setCustom.text())  
-    
-    
     def setGroupNum(self, num):
         self.setNum = int(num)
-
 
     def plotCapGraph(self, graphTitle, AreaElectrode, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
         try:
@@ -260,7 +262,6 @@ class tabdemo(QTabWidget):
                                                  graphTitle, AreaElectrode, 
                                                 XAxisLimit, XAxisLower,  YAxisLimit, YAxisLower, 
                                                 'Capacity (mAh/cm2)','Cycle Number')
-
     
     def setHeadings(self):
         self.headings = self.capacityGraph.get_headings(self.list_names,self.sheetName)
@@ -283,7 +284,12 @@ class tabdemo(QTabWidget):
         self.getSheet(0)
         self.setHeadings()
 
-
+    def setCycleName(self, cycle, voltage,current):
+        cycleDict = self.voltageGraph.breakCycles(self.list_names, self.sheetName, cycle, voltage, 
+                                                       self.capacity_cell, current, self.areaElectrode)
+        #set this as break cycles?
+        return cycleDict
+        pass
     def getColumn(self, dictKey):
         self.capacity_cell = self.headings[str(dictKey)]
         self.capacity_cell = self.capacity_cell[0]
@@ -297,7 +303,6 @@ class tabdemo(QTabWidget):
         layoutTop = QHBoxLayout()
         selectionLayout = QVBoxLayout()
         
-        self.tab2.filenameBox = QTableWidget(1,1)
         self.tab2.cycleNumberBox = QTableWidget(1,1)
         
 
@@ -313,12 +318,18 @@ class tabdemo(QTabWidget):
         bt1.toggle()
         bt1.setText("Plot")
         bt1.resize(5,10)
+        okButton = QPushButton
+        okButton.setText('OK')
+        okButton.resize(5,10)
         
         graphTitle = QLineEdit()        
         YAxisLimit = QLineEdit()
         YAxisLower = QLineEdit()
         XAxisLimit = QLineEdit()
         XAxisLower = QLineEdit()
+        Cycle = QLineEdit()
+        Voltage = QLineEdit()
+        Current = QLineEdit()
 
        
         formLayout.addRow("Name",graphTitle)
@@ -327,17 +338,25 @@ class tabdemo(QTabWidget):
         formLayout.addRow("YAxis lower", YAxisLower)
         formLayout.addRow("XAxis limit", XAxisLimit)
         formLayout.addRow("XAxis limit", XAxisLower)
+        formLayout.addRow("Cycle", Cycle)
+        formLayout.addRow("Voltage", Voltage)
+        formLayout.addRow("Current", Current)
         
         selectionLayout.addWidget(self.tab2.filenameBox)
         selectionLayout.addWidget(self.tab2.cycleNumberBox)
 
+        okButton.click.connect(lambda: self.setCycleName(Cycle.text(), Voltage.text(), Current.text()))
+        
         bt1.clicked.connect(lambda: self.graphVoltage(graphTitle.text(), YAxisLimit.text(),
                                              YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
 
         
         #formattings
+        hbox.addWidget(okButton)
+        vbox.addWidget(okButton) 
         hbox.addWidget(bt1)
         vbox.addWidget(bt1)
+               
                 
         vbox.addLayout(hbox)
         layoutTop.addLayout(selectionLayout)
@@ -367,12 +386,9 @@ class tabdemo(QTabWidget):
         except ValueError:
             YAxisLower = 0
         
-        
-#                 self.capacityGraph.plot_data(self.list_names, self.sheetName, self.column_cell, self.setNum, 
-#                                                  graphTitle, AreaElectrode, 
-#                                                 XAxisLimit, XAxisLower,  YAxisLimit, YAxisLower, 
-#                                                 'Capacity (mAh/cm2)','Cycle Number')    
-        self.voltageGraph.plot_data(self.list_names, cycle_num, self.sheetName, VoltageCol, CapacityCol, graphTitle, AreaElectrode, currentCol, cycleCol, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, YaxisLabel, XaxisLabel)
+
+#         self.voltageGraph.plot_data(self.list_names, cycle_num, self.sheetName, VoltageCol, CapacityCol, graphTitle, AreaElectrode, currentCol, cycleCol, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, YaxisLabel, XaxisLabel)
+#         self.voltageGraph.plot_data(self.list_names, cycle_num, self.sheetName, VoltageCol, CapacityCol, graphTitle, AreaElectrode, currentCol, cycleCol, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, YaxisLabel, XaxisLabel)
 
 
 #    def plot_data(self, file_names, cycle_num, sheet_num, VoltageCol, CapacityCol,
