@@ -4,16 +4,18 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from plotCapacity import *
 import pdb
+from cellData.plotVoltage import PlotVoltage
 
 class tabdemo(QTabWidget):
     capacityGraph = PlotCapacity()
+    voltageGraph = PlotVoltage()
     path_names=[]
     dict_path_names={}
     list_names = []
     list_checkboxes=[]
     headings=[]
     sheetnames = []
-    column_cell=''
+    capacity_cell=''
     sheetName = 'Sheet'
     setNum = 4
 
@@ -178,7 +180,7 @@ class tabdemo(QTabWidget):
 
         layout.addWidget(bt2)
         
-        bt1.clicked.connect(lambda: self.plotGraph(graphTitle.text(), AreaElectrode.text(), YAxisLimit.text(),
+        bt1.clicked.connect(lambda: self.plotCapGraph(graphTitle.text(), AreaElectrode.text(), YAxisLimit.text(),
                                                      YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
 
         bt2.clicked.connect(self.setSheetName)
@@ -233,7 +235,7 @@ class tabdemo(QTabWidget):
         self.setNum = int(num)
 
 
-    def plotGraph(self, graphTitle, AreaElectrode, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
+    def plotCapGraph(self, graphTitle, AreaElectrode, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
         try:
             XAxisLimit= float(XAxisLimit)           
         except ValueError:            
@@ -254,7 +256,7 @@ class tabdemo(QTabWidget):
 
 #         self.setGroupNum(self.tab1.setCustom.text())  
 
-        self.capacityGraph.plot_data(self.list_names, self.sheetName, self.column_cell, self.setNum, 
+        self.capacityGraph.plot_data(self.list_names, self.sheetName, self.capacity_cell, self.setNum, 
                                                  graphTitle, AreaElectrode, 
                                                 XAxisLimit, XAxisLower,  YAxisLimit, YAxisLower, 
                                                 'Capacity (mAh/cm2)','Cycle Number')
@@ -283,7 +285,8 @@ class tabdemo(QTabWidget):
 
 
     def getColumn(self, dictKey):
-        self.column_cell = self.headings[str(dictKey)]
+        self.capacity_cell = self.headings[str(dictKey)]
+        self.capacity_cell = self.capacity_cell[0]
     
     def getSheet(self, selectSheetIndex):
         self.sheetName = self.sheetnames[selectSheetIndex]
@@ -328,7 +331,7 @@ class tabdemo(QTabWidget):
         selectionLayout.addWidget(self.tab2.filenameBox)
         selectionLayout.addWidget(self.tab2.cycleNumberBox)
 
-        bt1.clicked.connect(lambda: self.plotVoltage(graphTitle.text(), YAxisLimit.text(),
+        bt1.clicked.connect(lambda: self.graphVoltage(graphTitle.text(), YAxisLimit.text(),
                                              YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
 
         
@@ -363,13 +366,20 @@ class tabdemo(QTabWidget):
             YAxisLower = float(YAxisLower)
         except ValueError:
             YAxisLower = 0
+        
+        
+#                 self.capacityGraph.plot_data(self.list_names, self.sheetName, self.column_cell, self.setNum, 
+#                                                  graphTitle, AreaElectrode, 
+#                                                 XAxisLimit, XAxisLower,  YAxisLimit, YAxisLower, 
+#                                                 'Capacity (mAh/cm2)','Cycle Number')    
+        self.voltageGraph.plot_data(self.list_names, cycle_num, self.sheetName, VoltageCol, CapacityCol, graphTitle, AreaElectrode, currentCol, cycleCol, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, YaxisLabel, XaxisLabel)
 
-#new class called plotVoltage?        
-#         self.capacityGraph.plot_data(self.list_names, 'sheetname1', self.column_cell, 4, 
-#                                             graphTitle,
-#                                             XAxisLimit, XAxisLower,  YAxisLimit, YAxisLower, 
-#                                             'Capacity (mAh/cm2)','Cycle Number')
-# 
+
+#    def plot_data(self, file_names, cycle_num, sheet_num, VoltageCol, CapacityCol,
+#                   graphTitle, AreaElectrode, 
+#                   currentCol, cycleCol,
+#                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
+#                   YaxisLabel,XaxisLabel):
 #             
         
 def main():

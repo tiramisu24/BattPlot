@@ -19,14 +19,13 @@ class PlotCapacity(PlotGraph):
                   YaxisLabel, XaxisLabel):
         
         count =0
-        column_name = column_cell[0]
         # add formating code
         for file_name in file_names:
             wb = load_workbook(file_name)
             cur_sheet = wb[sheet_num]
             max_length = cur_sheet.max_row
-            end_cell = column_name + str(max_length)
-            start_cell = column_name + str(1)
+            end_cell = column_cell + str(max_length)
+            start_cell = column_cell + str(1)
             temp_cell = cur_sheet[start_cell:end_cell]
             capacity = self.extract_data(temp_cell, self.AreaElectrode)  
             max_length = len(capacity)     
