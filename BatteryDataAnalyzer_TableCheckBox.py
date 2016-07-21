@@ -140,8 +140,6 @@ class tabdemo(QTabWidget):
         self.tab1.rbt = QRadioButton('Set')
         self.tab1.rbt2 = QRadioButton('Custom')
         
-        
-        
         graphTitle = QLineEdit()        
         AreaElectrode = QLineEdit()
         YAxisLimit = QLineEdit()
