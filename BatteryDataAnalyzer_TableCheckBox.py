@@ -103,14 +103,14 @@ class tabdemo(QTabWidget):
         radioBoxLayout = QHBoxLayout()
         
 
-        bt1 = QPushButton()
-        bt1.toggle()
-        bt1.setText("Plot")
-        bt1.resize(5,10)
-        bt2 = QPushButton()
-        bt2.toggle()
-        bt2.setText("Okay")
-        bt2.resize(5,10)
+        plotBotton = QPushButton()
+        plotBotton.toggle()
+        plotBotton.setText("Plot")
+        plotBotton.resize(5,10)
+        okButton = QPushButton()
+        okButton.toggle()
+        okButton.setText("Okay")
+        okButton.resize(5,10)
         self.tab1.rbt = QRadioButton('Set')
         self.tab1.rbt2 = QRadioButton('Custom')
         
@@ -142,9 +142,9 @@ class tabdemo(QTabWidget):
         selectionLayout.addWidget(self.tab1.filenameBox)
         
         #formattings
-        selectionLayout.addWidget(bt2)
-        hbox.addWidget(bt1)
-        vbox.addWidget(bt1)
+        selectionLayout.addWidget(okButton)
+        hbox.addWidget(plotBotton)
+        vbox.addWidget(plotBotton)
                 
         vbox.addLayout(hbox)
         layoutTop.addLayout(selectionLayout)
@@ -155,14 +155,14 @@ class tabdemo(QTabWidget):
         layout.addLayout(layoutTop)
         layout.addLayout(vbox)
 
-        layout.addWidget(bt2)
+        layout.addWidget(okButton)
         
         self.areaElectrode=AreaElectrode.text()
-        bt1.clicked.connect(lambda: self.plotCapGraph(graphTitle.text(), AreaElectrode.text(), YAxisLimit.text(),
+        plotBotton.clicked.connect(lambda: self.plotCapGraph(graphTitle.text(), AreaElectrode.text(), YAxisLimit.text(),
                                                      YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
 
-        bt2.clicked.connect(self.setSheetName)
-#         bt2.clicked.connect(self.setCycleName)
+        okButton.clicked.connect(self.setSheetName)
+#         okButton.clicked.connect(self.setCycleName)
             
         self.tab1.rbt.clicked.connect(self.autoSet)
         self.tab1.rbt2.clicked.connect(self.customSet)
@@ -263,13 +263,26 @@ class tabdemo(QTabWidget):
     def setSheetName(self):
         self.sheetnames = self.capacityGraph.get_sheetnames(self.list_names)
         self.populateComboBox(self.tab1.Sheet, self.sheetnames)
+        
+    def setSheetNameVoltage(self):
+        self.sheetnames = self.voltageGraph.get_sheetnames(self.list_names)
+        self.populateComboBox(self.tab2.Sheet, self.sheetnames)
             
     def setHeadings(self):
 #         pdb.set_trace()
         self.headingsCapacity = self.capacityGraph.get_headings(self.list_names, self.sheetName)
         headingTitle= self.headingsCapacity.keys()
         self.populateComboBox(self.tab1.Column, headingTitle)
-        
+
+    def setHeadingsVoltage(self):
+#         pdb.set_trace()
+        self.headingsCapacity = self.capacityGraph.get_headings(self.list_names, self.sheetName)
+        headingTitle= self.headingsCapacity.keys()
+        self.populateComboBox(self.tab2.Cycle, headingTitle) 
+        self.populateComboBox(self.tab2.Voltage, headingTitle) 
+        self.populateComboBox(self.tab2.Current, headingTitle) 
+
+              
 
 
     def setCycleName(self, cycle, voltage,current):
@@ -289,6 +302,10 @@ class tabdemo(QTabWidget):
     def getSheet(self, selectSheetIndex):
         self.sheetName = self.sheetnames[selectSheetIndex]
         self.setHeadings()
+        
+    def getSheetVoltage(self, selectSheetIndex):
+        self.sheetName = self.sheetnames[selectSheetIndex]
+        self.setHeadingsVoltage()
 
         
     def tab2UI(self):
@@ -306,10 +323,10 @@ class tabdemo(QTabWidget):
         vbox.addStretch(1)
         
 
-        bt1 = QPushButton()
-        bt1.toggle()
-        bt1.setText("Plot")
-        bt1.resize(5,10)
+        plotButton = QPushButton()
+        plotButton.toggle()
+        plotButton.setText("Plot")
+        plotButton.resize(5,10)
         okButton = QPushButton()
         okButton.toggle()
         okButton.setText("Okay")
@@ -321,10 +338,10 @@ class tabdemo(QTabWidget):
         XAxisLimit = QLineEdit()
         XAxisLower = QLineEdit()
         #change the next 3 to combobox
-        Sheetname = QComboBox()
-        Cycle = QComboBox()
-        Voltage = QComboBox()
-        Current = QComboBox()
+        self.tab2.Sheet = QComboBox()
+        self.tab2.Cycle = QComboBox()
+        self.tab2.Voltage = QComboBox()
+        self.tab2.Current = QComboBox()
 
        
         formLayout.addRow("Name",graphTitle)
@@ -333,26 +350,19 @@ class tabdemo(QTabWidget):
         formLayout.addRow("YAxis lower", YAxisLower)
         formLayout.addRow("XAxis limit", XAxisLimit)
         formLayout.addRow("XAxis limit", XAxisLower)
-        formLayout.addRow("Sheetname", Sheetname)        
-        formLayout.addRow("Cycle", Cycle)
-        formLayout.addRow("Voltage", Voltage)
-        formLayout.addRow("Current", Current)
+        formLayout.addRow("Sheetname", self.tab2.Sheet)        
+        formLayout.addRow("Cycle", self.tab2.Cycle)
+        formLayout.addRow("Voltage", self.tab2.Voltage)
+        formLayout.addRow("Current", self.tab2.Current)
         
         selectionLayout.addWidget(self.tab2.cycleNumberBox)
 
-        okButton.clicked.connect(self.setSheetName)
-        okButton.clicked.connect(self.setCycleName)
-
-        okButton.clicked.connect(lambda: self.setCycleName(Cycle, Voltage, Current))
-       
-        bt1.clicked.connect(lambda: self.graphVoltage(graphTitle.text(), YAxisLimit.text(),
-                                             YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
         
         #formattings
         hbox.addWidget(okButton)
         vbox.addWidget(okButton) 
-        hbox.addWidget(bt1)
-        vbox.addWidget(bt1)
+        hbox.addWidget(plotButton)
+        vbox.addWidget(plotButton)
                
                 
         vbox.addLayout(hbox)
@@ -365,22 +375,9 @@ class tabdemo(QTabWidget):
         self.setTabText(2,"Voltage Curves")
         self.tab2.setLayout(layout)
         
-#                 bt2.clicked.connect(self.setSheetName)
-# #         bt2.clicked.connect(self.setCycleName)
-#             
-#         self.tab1.rbt.clicked.connect(self.autoSet)
-#         self.tab1.rbt2.clicked.connect(self.customSet)
-#         
-#         self.tab1.Sheet.activated.connect(self.getSheet)
-# 
-# 
-#         self.tab1.Column.activated[str].connect(self.getColumn)
-#         
-#         self.setTabText(1,"Cycling")
-#         self.tab1.setLayout(layout)
-
-
-
+        
+        okButton.clicked.connect(self.setSheetNameVoltage)
+        self.tab2.Sheet.activated.connect(self.getSheetVoltage)
 
 
     def graphVoltage(self, graphTitle, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
