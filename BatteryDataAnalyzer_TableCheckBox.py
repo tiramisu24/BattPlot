@@ -83,12 +83,16 @@ class tabdemo(QTabWidget):
             self.list_names.remove(str(path_name))
         except ValueError:
             pass
+        
+        print "remove"
         self.list_names.sort()
     
     def addName(self,name):
         path_name = self.dict_path_names[name]
         self.list_names.append(str(path_name))
+        print "add"
         self.list_names.sort()
+        
                     
           
     def tab1UI(self):
@@ -252,8 +256,7 @@ class tabdemo(QTabWidget):
         box.clear()
         for item in thisList:
             box.addItem(str(item))
-            self.show()
-            
+            self.show()            
         box.setCurrentIndex(0)
     
     def populateChecklist(self,Box, thisList):      
@@ -290,10 +293,6 @@ class tabdemo(QTabWidget):
         self.populateComboBox(self.tab2.Voltage, headingTitle) 
         self.populateComboBox(self.tab2.Current, headingTitle) 
         self.populateComboBox(self.tab2.CapacityV, headingTitle) 
-
-
-              
-
 
     def setCycleName(self, cycle, voltage,current, capacity):
         pdb.set_trace()
@@ -435,6 +434,12 @@ class tabdemo(QTabWidget):
     
     
     def graphVoltage(self, graphTitle, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
+        ############
+        
+        #Suppose the populateList function is generalized
+        
+        ##########
+        
         axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)        
 
 #         self.voltageGraph.plot_data(self.list_names, cycle_num, self.sheetName, VoltageCol, CapacityCol, graphTitle, AreaElectrode, currentCol, cycleCol, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, YaxisLabel, XaxisLabel)
