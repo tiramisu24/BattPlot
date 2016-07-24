@@ -19,7 +19,7 @@ class PlotVoltage(PlotGraph):
         chargeVol = []
         discharCap = []
         discharVol = []
-        
+        pdb.set_trace()
         wb = load_workbook(filename)
         
         curSheet = wb[sheetName]            
@@ -56,6 +56,7 @@ class PlotVoltage(PlotGraph):
                     discharVol.append(curRowVol)
             except:
                 break
+        pdb.set_trace()
         return dictCycles
 
     def plot_data(self, file_names, cycle_num, sheet_num, VoltageCol, CapacityCol,
@@ -70,6 +71,8 @@ class PlotVoltage(PlotGraph):
 #         pdb.set_trace()
 
         # add formating code
+        #get ride of dictCycles call again( should have already caleld)
+        
         for file_name in file_names:
             comp = file_name[-4:] 
             if (comp =='xlsx'):

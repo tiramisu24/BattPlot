@@ -16,9 +16,15 @@ class tabdemo(QTabWidget):
     headingsCapacity=[]
     sheetnames = []
     capacity_cell=''
+    capacityCellV=''
+    cycleCell =''
+    voltageCell = ''
+    currentCell = ''
+    #cycle, voltage,current, capacity
     sheetNameCapacity = 'Sheet'
     setNum = 4
     areaElectrode=1
+    listCycles = []
   
     def __init__(self, parent = None):
         super(tabdemo, self).__init__(parent)
@@ -162,6 +168,8 @@ class tabdemo(QTabWidget):
                                                      YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
 
         okButton.clicked.connect(self.setSheetName)
+        okButton.clicked.connect(self.setSheetNameVoltage)
+
 #         okButton.clicked.connect(self.setCycleName)
             
         self.tab1.rbt.clicked.connect(self.autoSet)
@@ -281,23 +289,57 @@ class tabdemo(QTabWidget):
         self.populateComboBox(self.tab2.Cycle, headingTitle) 
         self.populateComboBox(self.tab2.Voltage, headingTitle) 
         self.populateComboBox(self.tab2.Current, headingTitle) 
+        self.populateComboBox(self.tab2.CapacityV, headingTitle) 
+
 
               
 
 
-    def setCycleName(self, cycle, voltage,current):
+    def setCycleName(self, cycle, voltage,current, capacity):
         pdb.set_trace()
-
-        cycleDict = self.voltageGraph.breakCycles(self.list_names, self.sheetName, cycle, voltage, 
+        for filename in self.list_names:
+            comp = filename[-4:] 
+            if (comp =='xlsx'):
+                cycleDict = self.voltageGraph.breakCycles(filename, self.sheetName, cycle, voltage, 
                                                        self.capacity_cell, current, self.areaElectrode)
+                break
+            else:
+                continue
         
-        #set this as break cycles?
-        pass
-    
+    def populateChecklistDict(self,Box, thisDict):  
+            
+        row = 0
+        for eachName in thisDict:
+            newCheckBox = QtGui.QTableWidgetItem(eachName)
+            newCheckBox.setFlags(QtCore.Qt.ItemIsUserCheckable |QtCore.Qt.ItemIsEnabled)
+            newCheckBox.setCheckState(QtCore.Qt.Unchecked)
+            
+            Box.insertRow(row)
+            Box.setItem(row, 1 , newCheckBox)
+        row +=1         
+        Box.itemClicked.connect(self.clicked)    
+ #    def populateChecklist(self,Box, thisList):      
+      
+        
     def getColumn(self, dictKey):
-#         pdb.set_trace()
         self.capacity_cell = self.headingsCapacity[str(dictKey)]
         self.capacity_cell = self.capacity_cell[0]
+   
+    def getColumnCycle(self, dictKey):
+        self.cycleCell = self.headingsCapacity[str(dictKey)]
+        self.cycleCell = self.cycleCell[0]
+    
+    def getColumnVoltage(self, dictKey):
+        self.voltageCell = self.headingsCapacity[str(dictKey)]
+        self.voltageCell = self.voltageCell[0]
+    
+    def getColumnCapacity(self, dictKey):
+        self.capacityCellV = self.headingsCapacity[str(dictKey)]
+        self.capacityCellV = self.capacityCellV[0]
+    
+    def getColumnCurrent(self, dictKey):
+        self.currentCell = self.headingsCapacity[str(dictKey)]
+        self.currentCell = self.currentCell[0]
     
     def getSheet(self, selectSheetIndex):
         self.sheetName = self.sheetnames[selectSheetIndex]
@@ -342,6 +384,8 @@ class tabdemo(QTabWidget):
         self.tab2.Cycle = QComboBox()
         self.tab2.Voltage = QComboBox()
         self.tab2.Current = QComboBox()
+        self.tab2.CapacityV = QComboBox()
+
 
        
         formLayout.addRow("Name",graphTitle)
@@ -354,6 +398,8 @@ class tabdemo(QTabWidget):
         formLayout.addRow("Cycle", self.tab2.Cycle)
         formLayout.addRow("Voltage", self.tab2.Voltage)
         formLayout.addRow("Current", self.tab2.Current)
+        formLayout.addRow("Capacity", self.tab2.CapacityV)
+
         
         selectionLayout.addWidget(self.tab2.cycleNumberBox)
 
@@ -374,12 +420,20 @@ class tabdemo(QTabWidget):
         
         self.setTabText(2,"Voltage Curves")
         self.tab2.setLayout(layout)
+#         self.tab1.Column.activated[str].connect(self.getColumn)
+        self.tab2.Cycle.activated[str].connect(self.getColumnCycle)
+        self.tab2.Voltage.activated[str].connect(self.getColumnVoltage)
+        self.tab2.Current.activated[str].connect(self.getColumnCurrent)
+        self.tab2.CapacityV.activated[str].connect(self.getColumnCapacity)
+
         
         
-        okButton.clicked.connect(self.setSheetNameVoltage)
         self.tab2.Sheet.activated.connect(self.getSheetVoltage)
+        okButton.clicked.connect(lambda: self.setCycleName(self.cycleCell, self.voltageCell,self.currentCell, self.capacity_cell))
 
 
+    
+    
     def graphVoltage(self, graphTitle, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
         axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)        
 
