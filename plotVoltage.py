@@ -57,35 +57,40 @@ class PlotVoltage(PlotGraph):
                     discharVol.append(curRowVol)
             except:
                 break
-        pdb.set_trace()
+#         pdb.set_trace()
         return dictCycles
 
-    def plot_data(self, file_names, dictCycles,
-                  graphTitle, AreaElectrode, 
-                  currentCol, cycleCol,
+    def plot_data(self, file_names, graphTitle, AreaElectrode, numCycles,
+                  currentCol, cycleCol,sheetName ,voltage, capacity,
                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
                   YaxisLabel,XaxisLabel):
         
         self.setParam(graphTitle, AreaElectrode, float(YAxisLimit), float(YAxisLower), 
                                             float(XAxisLimit), float(XAxisLower),YaxisLabel,XaxisLabel)     
         
-#         pdb.set_trace()
+        pdb.set_trace()
 
         # add formating code
-        cycleNum = dictCycles.keys()
-        
-        for file_name in file_names:
+        for filename in file_names:
+            comp = filename[-4:] 
+            if (comp =='xlsx'):
+#                     def breakCycles(self, filename, sheetName, cycle,voltage, capacity, current, areaElectrode):
 
-            
-            for num in cycleNum:                
+                dictCycles = self.breakCycles(filename, sheetName ,cycleCol, voltage, capacity, currentCol, AreaElectrode)
+            else:
+                continue
+            pdb.set_trace()
+            for cycle in numCycles:  
+                cycle = int(cycle)
+                              
 #                 pdb.set_trace()
 
-                tempDataList = dictCycles[num]
+                tempDataList = dictCycles[cycle]
                 line1, =plt.plot(tempDataList['chargeCap'],tempDataList['chargeVol'])
                 line2, =plt.plot(tempDataList['dischargeCap'],tempDataList['dischargeVol'])
             
-                line1.set_label(num)
-                line2.set_label(num)
+                line1.set_label(cycle)
+                line2.set_label(cycle)
         
         #axis range
         plt.legend()

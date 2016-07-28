@@ -335,27 +335,29 @@ class tabdemo(QTabWidget):
             Box.setItem(row, 1 , newCheckBox)
         print thisDict         
      
-        pdb.set_trace() 
+#         pdb.set_trace() 
         Box.itemClicked.connect(self.clickedV)  
         
     def clickedV(self, item):
+        pdb.set_trace()
         if item.checkState() == QtCore.Qt.Checked:
             self.addNameV(item.text())
         else:
             self.removeNameV(item.text())
 
     def removeNameV(self, name):
-        path_name = self.listCyclesAllKeys[name]
+        #right now listCyclesAllKeys is 
+#         path_name = self.listCyclesAllKeys[name]
         try:
-            self.listCycles.remove(str(path_name))
+            self.listCycles.remove(str(name))
         except ValueError:
             pass
         
         self.listCycles.sort()
     
     def addNameV(self,name):
-        path_name = self.listCyclesAllKeys[name]
-        self.listCycles.append(str(path_name))
+#         path_name = self.listCyclesAllKeys[name]
+        self.listCycles.append(str(name))
         self.listCycles.sort()  
       
         
@@ -482,17 +484,16 @@ class tabdemo(QTabWidget):
         
         # populateList is working for now
         
-        
+        pdb.set_trace()
         
         axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)   
   
-        self.voltageGraph.plot_data(self.list_checkboxes, self.voltageData, graphTitle, 
-                                    self.areaElectrode, axisRange[0], axisRange[1], axisRange[2], axisRange[3], 
+        self.voltageGraph.plot_data(self.list_names, graphTitle, self.areaElectrode, self.listCycles,
+                                    self.currentCell, self.cycleCell, self.sheetName, self.voltageCell, self.capacityCellV,
+                                    axisRange[0], axisRange[1], axisRange[2], axisRange[3], 
                                     'Voltage', 'Capacity')
-
-#            def plot_data(self, file_names, dictCycles,
-#                   graphTitle, AreaElectrode, 
-#                   currentCol, cycleCol,
+#     def plot_data(self, file_names, graphTitle, AreaElectrode, 
+#                   currentCol, cycleCol,sheetName ,voltage, capacity,
 #                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
 #                   YaxisLabel,XaxisLabel):
 
