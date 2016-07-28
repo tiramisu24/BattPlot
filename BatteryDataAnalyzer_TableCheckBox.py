@@ -25,6 +25,8 @@ class tabdemo(QTabWidget):
     setNum = 4
     areaElectrode=1
     listCycles = []
+    listCyclesAllKeys ={}
+    voltageData = {}
   
     def __init__(self, parent = None):
         super(tabdemo, self).__init__(parent)
@@ -259,17 +261,7 @@ class tabdemo(QTabWidget):
             self.show()            
         box.setCurrentIndex(0)
     
-    def populateChecklist(self,Box, thisList):      
-        row = 0
-        for eachName in thisList:
-            newCheckBox = QtGui.QTableWidgetItem(eachName)
-            newCheckBox.setFlags(QtCore.Qt.ItemIsUserCheckable |QtCore.Qt.ItemIsEnabled)
-            newCheckBox.setCheckState(QtCore.Qt.Unchecked)
-            
-            Box.insertRow(row)
-            Box.setItem(row, 1 , newCheckBox)
-        row +=1         
-        Box.itemClicked.connect(self.clicked)
+
         
     def setSheetName(self):
         self.sheetnames = self.capacityGraph.get_sheetnames(self.list_names)
@@ -295,29 +287,76 @@ class tabdemo(QTabWidget):
         self.populateComboBox(self.tab2.CapacityV, headingTitle) 
 
     def setCycleName(self, cycle, voltage,current, capacity):
-        pdb.set_trace()
+        ##########
+        #assume populate Checklist is completed
+        ##########
+        
+#         pdb.set_trace()
         for filename in self.list_names:
             comp = filename[-4:] 
             if (comp =='xlsx'):
-                cycleDict = self.voltageGraph.breakCycles(filename, self.sheetName, cycle, voltage, 
-                                                       self.capacity_cell, current, self.areaElectrode)
+                ########
+                #write function to find the cell with least cycles
+                ########
+                self.voltageData = self.voltageGraph.breakCycles(filename, self.sheetName, cycle, voltage, 
+                                                       capacity, current, self.areaElectrode)
                 break
             else:
                 continue
-        
-    def populateChecklistDict(self,Box, thisDict):  
             
+        self.listCyclesAllKeys = self.voltageData.keys()
+        self.populateChecklistDict(self.tab2.cycleNumberBox, self.listCyclesAllKeys)
+        #####
+        #populate table using this list
+        #listCycles should be the list being plotted
+        
+        ####
+        
+    def populateChecklist(self,Box, thisList):      
         row = 0
-        for eachName in thisDict:
-            newCheckBox = QtGui.QTableWidgetItem(eachName)
+        for eachName in thisList:
+            newCheckBox = QtGui.QTableWidgetItem(str(eachName))
             newCheckBox.setFlags(QtCore.Qt.ItemIsUserCheckable |QtCore.Qt.ItemIsEnabled)
             newCheckBox.setCheckState(QtCore.Qt.Unchecked)
             
             Box.insertRow(row)
             Box.setItem(row, 1 , newCheckBox)
-        row +=1         
-        Box.itemClicked.connect(self.clicked)    
- #    def populateChecklist(self,Box, thisList):      
+        Box.itemClicked.connect(self.clicked)        #Do select and then pass select to graphVoltage
+            
+        
+    def populateChecklistDict(self,Box, thisDict):  
+        row = 0
+        for eachName in thisDict:
+            newCheckBox = QtGui.QTableWidgetItem(str(eachName))
+            newCheckBox.setFlags(QtCore.Qt.ItemIsUserCheckable |QtCore.Qt.ItemIsEnabled)
+            newCheckBox.setCheckState(QtCore.Qt.Unchecked)
+            
+            Box.insertRow(row)
+            Box.setItem(row, 1 , newCheckBox)
+        print thisDict         
+     
+        pdb.set_trace() 
+        Box.itemClicked.connect(self.clickedV)  
+        
+    def clickedV(self, item):
+        if item.checkState() == QtCore.Qt.Checked:
+            self.addNameV(item.text())
+        else:
+            self.removeNameV(item.text())
+
+    def removeNameV(self, name):
+        path_name = self.listCyclesAllKeys[name]
+        try:
+            self.listCycles.remove(str(path_name))
+        except ValueError:
+            pass
+        
+        self.listCycles.sort()
+    
+    def addNameV(self,name):
+        path_name = self.listCyclesAllKeys[name]
+        self.listCycles.append(str(path_name))
+        self.listCycles.sort()  
       
         
     def getColumn(self, dictKey):
@@ -428,7 +467,8 @@ class tabdemo(QTabWidget):
         
         
         self.tab2.Sheet.activated.connect(self.getSheetVoltage)
-        okButton.clicked.connect(lambda: self.setCycleName(self.cycleCell, self.voltageCell,self.currentCell, self.capacity_cell))
+        okButton.clicked.connect(lambda: self.setCycleName(self.cycleCell, self.voltageCell,self.currentCell, self.capacityCellV))
+        plotButton.clicked.connect(lambda: self.graphVoltage(graphTitle.text(), YAxisLimit.text(), YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
 
 
     
@@ -440,18 +480,20 @@ class tabdemo(QTabWidget):
         
         ##########
         
-        axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)        
+        
+        axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)   
+  
+        self.voltageGraph.plot_data(self.list_checkboxes, self.voltageData, graphTitle, 
+                                    self.areaElectrode, axisRange[0], axisRange[1], axisRange[2], axisRange[3], 
+                                    'Voltage', 'Capacity')
 
-#         self.voltageGraph.plot_data(self.list_names, cycle_num, self.sheetName, VoltageCol, CapacityCol, graphTitle, AreaElectrode, currentCol, cycleCol, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, YaxisLabel, XaxisLabel)
-#         self.voltageGraph.plot_data(self.list_names, cycle_num, self.sheetName, VoltageCol, CapacityCol, graphTitle, AreaElectrode, currentCol, cycleCol, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, YaxisLabel, XaxisLabel)
-
-
-#    def plot_data(self, file_names, cycle_num, sheet_num, VoltageCol, CapacityCol,
+#            def plot_data(self, file_names, dictCycles,
 #                   graphTitle, AreaElectrode, 
 #                   currentCol, cycleCol,
 #                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
 #                   YaxisLabel,XaxisLabel):
-#             
+
+
         
 def main():
     app = QApplication(sys.argv)
