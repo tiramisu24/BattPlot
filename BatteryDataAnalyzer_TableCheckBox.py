@@ -480,6 +480,9 @@ class tabdemo(QTabWidget):
         
         ##########
         
+        # populateList is working for now
+        
+        
         
         axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)   
   

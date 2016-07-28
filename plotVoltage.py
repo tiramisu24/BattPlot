@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import pdb
 
 class PlotVoltage(PlotGraph):
+    areaElectrode =1
         
     def breakCycles(self, filename, sheetName, cycle,voltage, capacity, current, areaElectrode):
         #voltage and capacity returns column names
@@ -31,7 +32,7 @@ class PlotVoltage(PlotGraph):
 #                 pdb.set_trace()
                 curCycle = int(curSheet[cycle + str(row)].value)
                 curRowCur = curSheet[current + str(row)].value
-                curRowCap = float(curSheet[capacity + str(row)].value)/float(areaElectrode)
+                curRowCap = float(curSheet[capacity + str(row)].value)/float(self.areaElectrode)
                 curRowVol = curSheet[voltage + str(row)].value
                 prevRowVol = curSheet[voltage + str(row-1)].value
                 #if change or if maxlength then append information?
@@ -59,7 +60,7 @@ class PlotVoltage(PlotGraph):
         pdb.set_trace()
         return dictCycles
 
-    def plot_data(self, file_names, cycle_num, sheet_num, VoltageCol, CapacityCol,
+    def plot_data(self, file_names, dictCycles,
                   graphTitle, AreaElectrode, 
                   currentCol, cycleCol,
                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
@@ -71,16 +72,12 @@ class PlotVoltage(PlotGraph):
 #         pdb.set_trace()
 
         # add formating code
-        #get ride of dictCycles call again( should have already caleld)
+        cycleNum = dictCycles.keys()
         
         for file_name in file_names:
-            comp = file_name[-4:] 
-            if (comp =='xlsx'):
-                dictCycles = self.breakCycles(file_name, sheet_num, cycleCol, VoltageCol, CapacityCol, currentCol, AreaElectrode)
-            else:
-                continue
+
             
-            for num in cycle_num:                
+            for num in cycleNum:                
 #                 pdb.set_trace()
 
                 tempDataList = dictCycles[num]
