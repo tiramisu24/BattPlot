@@ -29,20 +29,29 @@ class PlotVoltage(PlotGraph):
         
         for row in range(3, max_length+1):
             try:
-#                 pdb.set_trace()
                 curCycle = int(curSheet[cycle + str(row)].value)
                 curRowCur = curSheet[current + str(row)].value
                 curRowCap = float(curSheet[capacity + str(row)].value)/float(self.areaElectrode)
                 curRowVol = curSheet[voltage + str(row)].value
                 prevRowVol = curSheet[voltage + str(row-1)].value
                 #if change or if maxlength then append information?
-                if row == max_length or curCycle>prevCycle: # or bigger than the next
+
+                if row == max_length or curCycle>prevCycle:
+                    pdb.set_trace()
+
                     temp['chargeCap']=chargeCap
                     temp['chargeVol']=chargeVol
                     temp['dischargeCap']=discharCap
                     temp['dischargeVol']=discharVol
-                 
+
                     dictCycles[prevCycle]=temp                
+
+                    chargeCap = []
+                    chargeVol = []
+                    discharCap = []
+                    discharVol = []
+                    temp ={}
+                    
                     prevCycle = curCycle       
                 
                 if curRowCur ==0:
