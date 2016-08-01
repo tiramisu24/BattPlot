@@ -291,7 +291,7 @@ class tabdemo(QTabWidget):
         #assume populate Checklist is completed
         ##########
         
-#         pdb.set_trace()
+#         .set_trace()
         for filename in self.list_names:
             comp = filename[-4:] 
             if (comp =='xlsx'):
@@ -339,7 +339,7 @@ class tabdemo(QTabWidget):
         Box.itemClicked.connect(self.clickedV)  
         
     def clickedV(self, item):
-        pdb.set_trace()
+#         pdb.set_trace()
         if item.checkState() == QtCore.Qt.Checked:
             self.addNameV(item.text())
         else:

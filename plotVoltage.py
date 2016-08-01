@@ -20,7 +20,7 @@ class PlotVoltage(PlotGraph):
         chargeVol = []
         discharCap = []
         discharVol = []
-        pdb.set_trace()
+#         pdb.set_trace()
         wb = load_workbook(filename)
         
         curSheet = wb[sheetName]            
@@ -37,7 +37,7 @@ class PlotVoltage(PlotGraph):
                 #if change or if maxlength then append information?
 
                 if row == max_length or curCycle>prevCycle:
-                    pdb.set_trace()
+#                     pdb.set_trace()
 
                     temp['chargeCap']=chargeCap
                     temp['chargeVol']=chargeVol
@@ -54,7 +54,7 @@ class PlotVoltage(PlotGraph):
                     
                     prevCycle = curCycle       
                 
-                if curRowCur ==0:
+                if curRowCur ==0 or curRowCap ==0:
                     continue
     
                 if prevRowVol<=curRowVol or curRowCur >0:
@@ -77,7 +77,7 @@ class PlotVoltage(PlotGraph):
         self.setParam(graphTitle, AreaElectrode, float(YAxisLimit), float(YAxisLower), 
                                             float(XAxisLimit), float(XAxisLower),YaxisLabel,XaxisLabel)     
         
-        pdb.set_trace()
+#         pdb.set_trace()
 
         # add formating code
         for filename in file_names:
@@ -88,18 +88,15 @@ class PlotVoltage(PlotGraph):
                 dictCycles = self.breakCycles(filename, sheetName ,cycleCol, voltage, capacity, currentCol, AreaElectrode)
             else:
                 continue
-            pdb.set_trace()
+#             pdb.set_trace()
             for cycle in numCycles:  
-                cycle = int(cycle)
-                              
-#                 pdb.set_trace()
-
+                cycle = int(cycle)                              
+#               pdb.set_trace()
                 tempDataList = dictCycles[cycle]
                 line1, =plt.plot(tempDataList['chargeCap'],tempDataList['chargeVol'])
-                line2, =plt.plot(tempDataList['dischargeCap'],tempDataList['dischargeVol'])
-            
-                line1.set_label(cycle)
-                line2.set_label(cycle)
+                line2, =plt.plot(tempDataList['dischargeCap'],tempDataList['dischargeVol'])            
+                line1.set_label(str(cycle) + " Charge " + filename)
+                line2.set_label(str(cycle) + " Discharge " + filename)
         
         #axis range
         plt.legend()
