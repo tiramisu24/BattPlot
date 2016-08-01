@@ -19,6 +19,7 @@ class PlotCapacity(PlotGraph):
                   YaxisLabel, XaxisLabel):
         
         count =0
+        ###### Add if type of electrode is not a number (is a string) then keep original
         # add formating code
         for file_name in file_names:
             wb = load_workbook(file_name)
@@ -33,7 +34,9 @@ class PlotCapacity(PlotGraph):
             cycle_number = range(1,max_length+1)
             if count >set_num or count == 0:
                 if count != 0:
-                    plt.legend()            
+#                     pdb.set_trace()
+#                     plt.legend()
+                    plt.legend(loc ='center left', bbox_to_anchor =(1,0.5))            
 
                 self.setParam(graphTitle, AreaElectrode, float(YAxisLimit), float(YAxisLower), 
                                     float(XAxisLimit), float(XAxisLower),YaxisLabel,XaxisLabel)                
@@ -45,8 +48,10 @@ class PlotCapacity(PlotGraph):
             count +=1
             
 #         pdb.set_trace()
+#         pdb.set_trace()
+#         plt.legend()            
 
-        plt.legend()            
+        plt.legend(loc ='center left', bbox_to_anchor =(1,0.5))            
         plt.show()
         
  

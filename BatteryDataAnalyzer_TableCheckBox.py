@@ -223,14 +223,6 @@ class tabdemo(QTabWidget):
         self.setNum = int(num)
     
     def setAxis(self,YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
-        try:
-            XAxisLimit= float(XAxisLimit)           
-        except ValueError:            
-            XAxisLimit = 50           
-        try:
-            XAxisLower = float(XAxisLower) 
-        except ValueError:
-            XAxisLower =0
         try: 
             YAxisLimit = float(YAxisLimit)
         except ValueError:
@@ -239,7 +231,14 @@ class tabdemo(QTabWidget):
             YAxisLower = float(YAxisLower)
         except ValueError:
             YAxisLower = 0
-        
+        try:
+            XAxisLimit= float(XAxisLimit)           
+        except ValueError:            
+            XAxisLimit = 50           
+        try:
+            XAxisLower = float(XAxisLower) 
+        except ValueError:
+            XAxisLower =0        
         return [YAxisLimit, YAxisLower, XAxisLimit, XAxisLower]
 
     def plotCapGraph(self, graphTitle, AreaElectrode, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):

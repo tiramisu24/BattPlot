@@ -99,7 +99,7 @@ class PlotVoltage(PlotGraph):
                 line2.set_label(str(cycle) + " Discharge " + filename)
         
         #axis range
-        plt.legend()
+        plt.legend(loc ='center left', bbox_to_anchor =(1,0.5))            
         plt.show()
         
     

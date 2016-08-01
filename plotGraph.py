@@ -12,7 +12,7 @@ class PlotGraph():
         plt.figure()
         plt.ylabel(YaxisLabel)
         plt.xlabel(XaxisLabel)
-        plt.axis([YAxisLower,YAxisLimit,XAxisLower,XAxisLimit])
+        plt.axis([XAxisLower,XAxisLimit,YAxisLower,YAxisLimit])
         plt.title(graphTitle) 
         self.AreaElectrode = AreaElectrode
 
