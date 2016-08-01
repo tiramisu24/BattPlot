@@ -22,6 +22,8 @@ class PlotCapacity(PlotGraph):
         ###### Add if type of electrode is not a number (is a string) then keep original
         # add formating code
         for file_name in file_names:
+            legendName = file_name[-13:] 
+
             wb = load_workbook(file_name)
             cur_sheet = wb[sheet_num]
             max_length = cur_sheet.max_row
@@ -44,7 +46,7 @@ class PlotCapacity(PlotGraph):
 
                             
             line, = plt.plot(cycle_number,capacity)
-            line.set_label(file_name)
+            line.set_label(legendName)
             count +=1
             
 #         pdb.set_trace()

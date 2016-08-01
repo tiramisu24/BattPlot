@@ -81,7 +81,8 @@ class PlotVoltage(PlotGraph):
 
         # add formating code
         for filename in file_names:
-            comp = filename[-4:] 
+            comp = filename[-4:]
+            legendName = filename[-13:] 
             if (comp =='xlsx'):
 #                     def breakCycles(self, filename, sheetName, cycle,voltage, capacity, current, areaElectrode):
 
@@ -95,8 +96,8 @@ class PlotVoltage(PlotGraph):
                 tempDataList = dictCycles[cycle]
                 line1, =plt.plot(tempDataList['chargeCap'],tempDataList['chargeVol'])
                 line2, =plt.plot(tempDataList['dischargeCap'],tempDataList['dischargeVol'])            
-                line1.set_label(str(cycle) + " Charge " + filename)
-                line2.set_label(str(cycle) + " Discharge " + filename)
+                line1.set_label(str(cycle) + " Charge " + legendName)
+                line2.set_label(str(cycle) + " Discharge " + legendName)
         
         #axis range
         plt.legend(loc ='center left', bbox_to_anchor =(1,0.5))            
