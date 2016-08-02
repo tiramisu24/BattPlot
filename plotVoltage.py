@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import pdb
 
 class PlotVoltage(PlotGraph):
-    areaElectrode =1
+#     areaElectrode =1
         
     def breakCycles(self, filename, sheetName, cycle,voltage, capacity, current, areaElectrode):
         #voltage and capacity returns column names
@@ -31,7 +31,7 @@ class PlotVoltage(PlotGraph):
             try:
                 curCycle = int(curSheet[cycle + str(row)].value)
                 curRowCur = curSheet[current + str(row)].value
-                curRowCap = float(curSheet[capacity + str(row)].value)/float(self.areaElectrode)
+                curRowCap = float(curSheet[capacity + str(row)].value)/float(areaElectrode)
                 curRowVol = curSheet[voltage + str(row)].value
                 prevRowVol = curSheet[voltage + str(row-1)].value
                 #if change or if maxlength then append information?

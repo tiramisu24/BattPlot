@@ -127,7 +127,7 @@ class tabdemo(QTabWidget):
         self.tab1.rbt2 = QRadioButton('Custom')
         
         graphTitle = QLineEdit()        
-        AreaElectrode = QLineEdit()
+        self.tab1.AreaElectrode = QLineEdit()
         YAxisLimit = QLineEdit()
         YAxisLower = QLineEdit()
         XAxisLimit = QLineEdit()
@@ -141,7 +141,7 @@ class tabdemo(QTabWidget):
         formLayout.addRow("Column",self.tab1.Column)
        
         formLayout.addRow("Name",graphTitle)
-        formLayout.addRow("Area",AreaElectrode)
+        formLayout.addRow("Area",self.tab1.AreaElectrode)
         
         #add checkbox for auto axis
         formLayout.addRow("YAxis limit", YAxisLimit)
@@ -169,8 +169,8 @@ class tabdemo(QTabWidget):
 
         layout.addWidget(okButton)
         
-        self.areaElectrode=AreaElectrode.text()
-        plotBotton.clicked.connect(lambda: self.plotCapGraph(graphTitle.text(), AreaElectrode.text(), YAxisLimit.text(),
+
+        plotBotton.clicked.connect(lambda: self.plotCapGraph(graphTitle.text(), YAxisLimit.text(),
                                                      YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
 
         okButton.clicked.connect(self.setSheetName)
@@ -241,14 +241,15 @@ class tabdemo(QTabWidget):
             XAxisLower =0        
         return [YAxisLimit, YAxisLower, XAxisLimit, XAxisLower]
 
-    def plotCapGraph(self, graphTitle, AreaElectrode, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
+    def plotCapGraph(self, graphTitle, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
         axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)
+        self.areaElectrode=self.tab1.AreaElectrode.text()
 #         pdb.set_trace()
 
 #         self.setGroupNum(self.tab1.setCustom.text())  
 
         self.capacityGraph.plot_data(self.list_names, self.sheetName, self.capacity_cell, self.setNum, 
-                                                 graphTitle, AreaElectrode, 
+                                                 graphTitle, self.areaElectrode, 
                                                  axisRange[0], axisRange[1], axisRange[2], axisRange[3],
                                                 'Capacity (mAh/cm2)','Cycle Number')
     
@@ -428,7 +429,6 @@ class tabdemo(QTabWidget):
 
        
         formLayout.addRow("Name",graphTitle)
-        #add checkbox for auto axis
         formLayout.addRow("YAxis limit", YAxisLimit)
         formLayout.addRow("YAxis lower", YAxisLower)
         formLayout.addRow("XAxis limit", XAxisLimit)
@@ -484,13 +484,14 @@ class tabdemo(QTabWidget):
         # populateList is working for now
         
         pdb.set_trace()
-        
+        self.areaElectrode=self.tab1.AreaElectrode.text()
+
         axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)   
   
         self.voltageGraph.plot_data(self.list_names, graphTitle, self.areaElectrode, self.listCycles,
                                     self.currentCell, self.cycleCell, self.sheetName, self.voltageCell, self.capacityCellV,
                                     axisRange[0], axisRange[1], axisRange[2], axisRange[3], 
-                                    'Voltage', 'Capacity')
+                                    'Voltage (mV)', 'Capacity (mAh/cm2)')
 #     def plot_data(self, file_names, graphTitle, AreaElectrode, 
 #                   currentCol, cycleCol,sheetName ,voltage, capacity,
 #                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
