@@ -11,7 +11,7 @@ import pdb
 
 
 class PlotCapacity(PlotGraph):
-    AreaElectrode = 1
+#     AreaElectrode = 1
 
     def plot_data(self, file_names, sheet_num, column_cell, set_num,
                   graphTitle, AreaElectrode, 
@@ -23,14 +23,15 @@ class PlotCapacity(PlotGraph):
         # add formating code
         for file_name in file_names:
             legendName = file_name[-13:] 
-
             wb = load_workbook(file_name)
             cur_sheet = wb[sheet_num]
             max_length = cur_sheet.max_row
             end_cell = column_cell + str(max_length)
             start_cell = column_cell + str(1)
             temp_cell = cur_sheet[start_cell:end_cell]
-            capacity = self.extract_data(temp_cell, self.AreaElectrode)  
+            pdb.set_trace()
+
+            capacity = self.extract_data(temp_cell, AreaElectrode)  
             max_length = len(capacity)     
  
             cycle_number = range(1,max_length+1)
@@ -44,12 +45,12 @@ class PlotCapacity(PlotGraph):
                                     float(XAxisLimit), float(XAxisLower),YaxisLabel,XaxisLabel)                
                 count = 1                
 
+
                             
             line, = plt.plot(cycle_number,capacity)
             line.set_label(legendName)
             count +=1
             
-#         pdb.set_trace()
 #         pdb.set_trace()
 #         plt.legend()            
 

@@ -20,7 +20,6 @@ class tabdemo(QTabWidget):
     cycleCell =''
     voltageCell = ''
     currentCell = ''
-    #cycle, voltage,current, capacity
     sheetNameCapacity = 'Sheet'
     setNum = 4
     areaElectrode=1
@@ -41,7 +40,7 @@ class tabdemo(QTabWidget):
         self.addTab(self.tab0,"Tab 0")
         self.addTab(self.tab1,"Tab 1")
         self.addTab(self.tab2, "Tab 2")
-        
+                
         self.tab0UI()
         self.tab1UI()
         self.tab2UI()
@@ -483,7 +482,7 @@ class tabdemo(QTabWidget):
         
         # populateList is working for now
         
-        pdb.set_trace()
+#         pdb.set_trace()
         self.areaElectrode=self.tab1.AreaElectrode.text()
 
         axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)   
@@ -491,13 +490,7 @@ class tabdemo(QTabWidget):
         self.voltageGraph.plot_data(self.list_names, graphTitle, self.areaElectrode, self.listCycles,
                                     self.currentCell, self.cycleCell, self.sheetName, self.voltageCell, self.capacityCellV,
                                     axisRange[0], axisRange[1], axisRange[2], axisRange[3], 
-                                    'Voltage (mV)', 'Capacity (mAh/cm2)')
-#     def plot_data(self, file_names, graphTitle, AreaElectrode, 
-#                   currentCol, cycleCol,sheetName ,voltage, capacity,
-#                   YAxisLimit, YAxisLower, XAxisLimit, XAxisLower, 
-#                   YaxisLabel,XaxisLabel):
-
-
+                                    'Voltage', 'Capacity ')
         
 def main():
     app = QApplication(sys.argv)

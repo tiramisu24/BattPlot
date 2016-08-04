@@ -56,7 +56,8 @@ class PlotVoltage(PlotGraph):
                 
                 if curRowCur ==0 or curRowCap ==0:
                     continue
-    
+                
+#                 pdb.set_trace()
                 if prevRowVol<=curRowVol or curRowCur >0:
                     chargeCap.append(curRowCap)
                     chargeVol.append(curRowVol)
@@ -77,7 +78,7 @@ class PlotVoltage(PlotGraph):
         self.setParam(graphTitle, AreaElectrode, float(YAxisLimit), float(YAxisLower), 
                                             float(XAxisLimit), float(XAxisLower),YaxisLabel,XaxisLabel)     
         
-#         pdb.set_trace()
+        pdb.set_trace()
 
         # add formating code
         for filename in file_names:
