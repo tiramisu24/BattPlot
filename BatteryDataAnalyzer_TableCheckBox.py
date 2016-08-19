@@ -12,7 +12,6 @@ class tabdemo(QTabWidget):
     path_names=[]
     dict_path_names={}
     list_names = []
-    list_checkboxes=[]
     headingsCapacity=[]
     sheetnames = []
     capacity_cell=''
@@ -83,8 +82,7 @@ class tabdemo(QTabWidget):
         try:
             self.list_names.remove(str(path_name))
         except ValueError:
-            pass
-        
+            pass       
         print "remove"
         self.list_names.sort()
     
@@ -97,7 +95,6 @@ class tabdemo(QTabWidget):
                     
           
     def tab1UI(self):
-        #populate entry fields and save information
         layout = QVBoxLayout()       
         layoutTop = QHBoxLayout()
         selectionLayout = QVBoxLayout()
@@ -122,6 +119,10 @@ class tabdemo(QTabWidget):
         okButton.toggle()
         okButton.setText("Okay")
         okButton.resize(5,10)
+        clearButton = QPushButton()
+        clearButton.toggle()
+        clearButton.setText('Clear Cache')
+        clearButton.resize(5,10)
         self.tab1.rbt = QRadioButton('Set')
         self.tab1.rbt2 = QRadioButton('Custom')
         
@@ -142,7 +143,6 @@ class tabdemo(QTabWidget):
         formLayout.addRow("Name",graphTitle)
         formLayout.addRow("Area",self.tab1.AreaElectrode)
         
-        #add checkbox for auto axis
         formLayout.addRow("YAxis limit", YAxisLimit)
         formLayout.addRow("YAxis lower", YAxisLower)
         formLayout.addRow("XAxis limit", XAxisLimit)
@@ -152,21 +152,21 @@ class tabdemo(QTabWidget):
         
         selectionLayout.addWidget(self.tab1.filenameBox)
         
-        #formattings
         selectionLayout.addWidget(okButton)
+        selectionLayout.addWidget(clearButton)
         hbox.addWidget(plotBotton)
         vbox.addWidget(plotBotton)
                 
         vbox.addLayout(hbox)
         layoutTop.addLayout(selectionLayout)
         layoutTop.addLayout(formLayout)
-#         layoutTop.addLayout(self.tab1.optionBox)
 
  
         layout.addLayout(layoutTop)
         layout.addLayout(vbox)
 
         layout.addWidget(okButton)
+        layout.addWidget(clearButton)
         
 
         plotBotton.clicked.connect(lambda: self.plotCapGraph(graphTitle.text(), YAxisLimit.text(),
@@ -174,8 +174,7 @@ class tabdemo(QTabWidget):
 
         okButton.clicked.connect(self.setSheetName)
         okButton.clicked.connect(self.setSheetNameVoltage)
-
-#         okButton.clicked.connect(self.setCycleName)
+        clearButton.clicked.connect(self.clearTable)
             
         self.tab1.rbt.clicked.connect(self.autoSet)
         self.tab1.rbt2.clicked.connect(self.customSet)
@@ -187,6 +186,11 @@ class tabdemo(QTabWidget):
         
         self.setTabText(1,"Cycling")
         self.tab1.setLayout(layout)
+    
+    def clearTable(self):
+        self.list_names=[]
+        self.listCycles = []
+
     
     def autoSet(self):
         if self.tab1.optionBox.isEmpty() == False:
@@ -205,7 +209,6 @@ class tabdemo(QTabWidget):
             self.tab1.setComboBox.activated[str].connect(self.setGroupNum)
                 
     def customSet(self):
-#         pdb.set_trace()
             
         if self.tab1.optionBox.isEmpty() == False:
             try:
@@ -243,16 +246,12 @@ class tabdemo(QTabWidget):
     def plotCapGraph(self, graphTitle, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
         axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)
         self.areaElectrode=self.tab1.AreaElectrode.text()
-#         pdb.set_trace()
-
-#         self.setGroupNum(self.tab1.setCustom.text())  
 
         self.capacityGraph.plot_data(self.list_names, self.sheetName, self.capacity_cell, self.setNum, 
                                                  graphTitle, self.areaElectrode, 
                                                  axisRange[0], axisRange[1], axisRange[2], axisRange[3],
                                                 'Capacity (mAh/cm2)','Cycle Number')
     
-    #make this more general!!
     def populateComboBox(self, box, thisList):
         box.clear()
         for item in thisList:
@@ -271,13 +270,11 @@ class tabdemo(QTabWidget):
         self.populateComboBox(self.tab2.Sheet, self.sheetnames)
             
     def setHeadings(self):
-#         pdb.set_trace()
         self.headingsCapacity = self.capacityGraph.get_headings(self.list_names, self.sheetName)
         headingTitle= self.headingsCapacity.keys()
         self.populateComboBox(self.tab1.Column, headingTitle)
 
     def setHeadingsVoltage(self):
-#         pdb.set_trace()
         self.headingsCapacity = self.capacityGraph.get_headings(self.list_names, self.sheetName)
         headingTitle= self.headingsCapacity.keys()
         self.populateComboBox(self.tab2.Cycle, headingTitle) 
@@ -286,11 +283,7 @@ class tabdemo(QTabWidget):
         self.populateComboBox(self.tab2.CapacityV, headingTitle) 
 
     def setCycleName(self, cycle, voltage,current, capacity):
-        ##########
-        #assume populate Checklist is completed
-        ##########
-        
-#         .set_trace()
+
         for filename in self.list_names:
             comp = filename[-4:] 
             if (comp =='xlsx'):
@@ -305,14 +298,12 @@ class tabdemo(QTabWidget):
             
         self.listCyclesAllKeys = self.voltageData.keys()
         self.populateChecklistDict(self.tab2.cycleNumberBox, self.listCyclesAllKeys)
-        #####
-        #populate table using this list
-        #listCycles should be the list being plotted
-        
-        ####
+
         
     def populateChecklist(self,Box, thisList):      
         row = 0
+        pdb.set_trace()
+        thisList=sorted(thisList)
         for eachName in thisList:
             newCheckBox = QtGui.QTableWidgetItem(str(eachName))
             newCheckBox.setFlags(QtCore.Qt.ItemIsUserCheckable |QtCore.Qt.ItemIsEnabled)
@@ -320,7 +311,7 @@ class tabdemo(QTabWidget):
             
             Box.insertRow(row)
             Box.setItem(row, 1 , newCheckBox)
-        Box.itemClicked.connect(self.clicked)        #Do select and then pass select to graphVoltage
+        Box.itemClicked.connect(self.clicked)       
             
         
     def populateChecklistDict(self,Box, thisDict):  
@@ -332,21 +323,16 @@ class tabdemo(QTabWidget):
             
             Box.insertRow(row)
             Box.setItem(row, 1 , newCheckBox)
-        print thisDict         
-     
-#         pdb.set_trace() 
+
         Box.itemClicked.connect(self.clickedV)  
         
     def clickedV(self, item):
-#         pdb.set_trace()
         if item.checkState() == QtCore.Qt.Checked:
             self.addNameV(item.text())
         else:
             self.removeNameV(item.text())
 
     def removeNameV(self, name):
-        #right now listCyclesAllKeys is 
-#         path_name = self.listCyclesAllKeys[name]
         try:
             self.listCycles.remove(str(name))
         except ValueError:
@@ -355,7 +341,6 @@ class tabdemo(QTabWidget):
         self.listCycles.sort()
     
     def addNameV(self,name):
-#         path_name = self.listCyclesAllKeys[name]
         self.listCycles.append(str(name))
         self.listCycles.sort()  
       
@@ -390,7 +375,6 @@ class tabdemo(QTabWidget):
 
         
     def tab2UI(self):
-         #populate entry fields and save information
         layout = QVBoxLayout()       
         layoutTop = QHBoxLayout()
         selectionLayout = QVBoxLayout()
@@ -418,7 +402,6 @@ class tabdemo(QTabWidget):
         YAxisLower = QLineEdit()
         XAxisLimit = QLineEdit()
         XAxisLower = QLineEdit()
-        #change the next 3 to combobox
         self.tab2.Sheet = QComboBox()
         self.tab2.Cycle = QComboBox()
         self.tab2.Voltage = QComboBox()
@@ -441,8 +424,6 @@ class tabdemo(QTabWidget):
         
         selectionLayout.addWidget(self.tab2.cycleNumberBox)
 
-        
-        #formattings
         hbox.addWidget(okButton)
         vbox.addWidget(okButton) 
         hbox.addWidget(plotButton)
@@ -458,31 +439,17 @@ class tabdemo(QTabWidget):
         
         self.setTabText(2,"Voltage Curves")
         self.tab2.setLayout(layout)
-#         self.tab1.Column.activated[str].connect(self.getColumn)
         self.tab2.Cycle.activated[str].connect(self.getColumnCycle)
         self.tab2.Voltage.activated[str].connect(self.getColumnVoltage)
         self.tab2.Current.activated[str].connect(self.getColumnCurrent)
-        self.tab2.CapacityV.activated[str].connect(self.getColumnCapacity)
-
-        
+        self.tab2.CapacityV.activated[str].connect(self.getColumnCapacity)        
         
         self.tab2.Sheet.activated.connect(self.getSheetVoltage)
         okButton.clicked.connect(lambda: self.setCycleName(self.cycleCell, self.voltageCell,self.currentCell, self.capacityCellV))
         plotButton.clicked.connect(lambda: self.graphVoltage(graphTitle.text(), YAxisLimit.text(), YAxisLower.text(), XAxisLimit.text(), XAxisLower.text()))
-
-
     
     
     def graphVoltage(self, graphTitle, YAxisLimit, YAxisLower, XAxisLimit, XAxisLower):
-        ############
-        
-        #Suppose the populateList function is generalized
-        
-        ##########
-        
-        # populateList is working for now
-        
-#         pdb.set_trace()
         self.areaElectrode=self.tab1.AreaElectrode.text()
 
         axisRange = self.setAxis(YAxisLimit, YAxisLower, XAxisLimit, XAxisLower)   

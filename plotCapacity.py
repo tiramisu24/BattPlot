@@ -11,7 +11,6 @@ import pdb
 
 
 class PlotCapacity(PlotGraph):
-#     AreaElectrode = 1
 
     def plot_data(self, file_names, sheet_num, column_cell, set_num,
                   graphTitle, AreaElectrode, 
@@ -19,8 +18,7 @@ class PlotCapacity(PlotGraph):
                   YaxisLabel, XaxisLabel):
         
         count =0
-        ###### Add if type of electrode is not a number (is a string) then keep original
-        # add formating code
+        
         for file_name in file_names:
             legendName = file_name[-13:] 
             wb = load_workbook(file_name)
@@ -29,7 +27,6 @@ class PlotCapacity(PlotGraph):
             end_cell = column_cell + str(max_length)
             start_cell = column_cell + str(1)
             temp_cell = cur_sheet[start_cell:end_cell]
-            pdb.set_trace()
 
             capacity = self.extract_data(temp_cell, AreaElectrode)  
             max_length = len(capacity)     
@@ -37,23 +34,16 @@ class PlotCapacity(PlotGraph):
             cycle_number = range(1,max_length+1)
             if count >set_num or count == 0:
                 if count != 0:
-#                     pdb.set_trace()
-#                     plt.legend()
                     plt.legend(loc ='center left', bbox_to_anchor =(1,0.5))            
 
                 self.setParam(graphTitle, AreaElectrode, float(YAxisLimit), float(YAxisLower), 
                                     float(XAxisLimit), float(XAxisLower),YaxisLabel,XaxisLabel)                
                 count = 1                
-
-
                             
             line, = plt.plot(cycle_number,capacity)
             line.set_label(legendName)
             count +=1
             
-#         pdb.set_trace()
-#         plt.legend()            
-
         plt.legend(loc ='center left', bbox_to_anchor =(1,0.5))            
         plt.show()
         

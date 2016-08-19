@@ -43,14 +43,12 @@ class PlotGraph():
             if (comp =='xlsx'):
                 first_file = item
                 break
-
         
         wb = load_workbook(first_file, data_only= True)
         
         sheet_name = wb.get_sheet_names()
         return sheet_name
         
-    #read the first line and get headers for file
     def get_headings(self, listDataFiles,sheetName):
         
         for item in listDataFiles:            
@@ -70,8 +68,6 @@ class PlotGraph():
         first_row_dic={}
         
         while count < max_length:
-#             pdb.set_trace()
-            #add a button to know column start
             index_val = alpha_list[count] + str(2)
             cell_value = sheet_name[index_val].value           
             first_row.append(cell_value)
@@ -82,14 +78,10 @@ class PlotGraph():
     
         
 
-        #if user decides to recind, call this method again
     def extract_data (self, tupleoftuple, AreaElectrode):
-#         pdb.set_trace()
-
         listdata = []
         for item in tupleoftuple:
             cell_data = item[0].value
-#             pdb.set_trace()
             try:
                 cell_data = float(cell_data)/float(AreaElectrode)
             except ValueError:
@@ -97,9 +89,7 @@ class PlotGraph():
             except TypeError:
                 continue
             
-            listdata.append(cell_data)
-                
-#         del listdata[0]              
+            listdata.append(cell_data)                
         return listdata
         
     def closeGraph(self):

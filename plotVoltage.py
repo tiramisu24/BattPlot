@@ -8,11 +8,8 @@ import matplotlib.pyplot as plt
 import pdb
 
 class PlotVoltage(PlotGraph):
-#     areaElectrode =1
         
     def breakCycles(self, filename, sheetName, cycle,voltage, capacity, current, areaElectrode):
-        #voltage and capacity returns column names
-        #returns inidividual cycles of filenames selected
         dictCycles ={}
 
         temp = {}
@@ -20,7 +17,6 @@ class PlotVoltage(PlotGraph):
         chargeVol = []
         discharCap = []
         discharVol = []
-#         pdb.set_trace()
         wb = load_workbook(filename)
         
         curSheet = wb[sheetName]            
@@ -34,10 +30,8 @@ class PlotVoltage(PlotGraph):
                 curRowCap = float(curSheet[capacity + str(row)].value)/float(areaElectrode)
                 curRowVol = curSheet[voltage + str(row)].value
                 prevRowVol = curSheet[voltage + str(row-1)].value
-                #if change or if maxlength then append information?
 
                 if row == max_length or curCycle>prevCycle:
-#                     pdb.set_trace()
 
                     temp['chargeCap']=chargeCap
                     temp['chargeVol']=chargeVol
@@ -57,17 +51,15 @@ class PlotVoltage(PlotGraph):
                 if curRowCur ==0 or curRowCap ==0:
                     continue
                 
-#                 pdb.set_trace()
-                if prevRowVol<=curRowVol or curRowCur >0:
+                if prevRowVol<=curRowVol and curRowCur >0:
                     chargeCap.append(curRowCap)
                     chargeVol.append(curRowVol)
                     
-                elif prevRowVol>=curRowVol or curRowCur <0:
+                elif prevRowVol>=curRowVol and curRowCur <0:
                     discharCap.append(curRowCap)
                     discharVol.append(curRowVol)
             except:
                 break
-#         pdb.set_trace()
         return dictCycles
 
     def plot_data(self, file_names, graphTitle, AreaElectrode, numCycles,
@@ -78,29 +70,30 @@ class PlotVoltage(PlotGraph):
         self.setParam(graphTitle, AreaElectrode, float(YAxisLimit), float(YAxisLower), 
                                             float(XAxisLimit), float(XAxisLower),YaxisLabel,XaxisLabel)     
         
-        pdb.set_trace()
-
-        # add formating code
+        formatColors = ['g', 'r', 'k','c','m', 'y']
+        n=0
+        
         for filename in file_names:
             comp = filename[-4:]
             legendName = filename[-13:] 
             if (comp =='xlsx'):
-#                     def breakCycles(self, filename, sheetName, cycle,voltage, capacity, current, areaElectrode):
 
                 dictCycles = self.breakCycles(filename, sheetName ,cycleCol, voltage, capacity, currentCol, AreaElectrode)
             else:
                 continue
-#             pdb.set_trace()
             for cycle in numCycles:  
                 cycle = int(cycle)                              
-#               pdb.set_trace()
                 tempDataList = dictCycles[cycle]
-                line1, =plt.plot(tempDataList['chargeCap'],tempDataList['chargeVol'])
-                line2, =plt.plot(tempDataList['dischargeCap'],tempDataList['dischargeVol'])            
+                line1, =plt.plot(tempDataList['chargeCap'],tempDataList['chargeVol'] , formatColors[n])
+                line2, =plt.plot(tempDataList['dischargeCap'],tempDataList['dischargeVol'],formatColors[n])            
                 line1.set_label(str(cycle) + " Charge " + legendName)
                 line2.set_label(str(cycle) + " Discharge " + legendName)
+                
+                if n==5:
+                    n=0
+                else:               
+                    n +=1
         
-        #axis range
         plt.legend(loc ='center left', bbox_to_anchor =(1,0.5))            
         plt.show()
         
